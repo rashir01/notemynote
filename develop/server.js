@@ -1,30 +1,33 @@
 const express = require('express');
 const path = require('path');
 const notes = require('./db/db.json');
-const helper = require('./helper.js');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
-uuidv4();
+
 
 
 const PORT = process.env.port || 3001;
 
 const app = express();
 
+// app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
+app.use(express.static('public'))
 
 app.get('/notes', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/notes.html'));
+  res.sendFile(path.join(__dirname, './public/notes.html'));
   console.log('servign notes ');
 });
 
 app.get('/api/notes', (req, res) => {
   console.log("api/nots served");
-  res.json(notes)
+  fs.readFile('./db/db.json', 'utf8', (err, data) => {
+    res.json(JSON.parse(data))
+  });  
 });
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/index.html'));
+  res.sendFile(path.join(__dirname, './public/index.html'));
   console.log("serving index");
 })
 
@@ -57,7 +60,6 @@ app.post('/api/notes', (req, res) => {
         const existingNotes = JSON.parse(data);
         //add a new note
         existingNotes.push(newNote);
-
         //write updated notes back to the file
         fs.writeFile('./db/db.json', 
           JSON.stringify(existingNotes, null, 4),
@@ -75,11 +77,6 @@ app.post('/api/notes', (req, res) => {
   } else {
     res.status(500).json('Error in posting review');
   }
-
-  //let auto_id = uuidv4();
-  //console.info(`autoid ${auto_id}`);
-  // Prepare a response object to send back to the client
-  
 });
 
 app.listen(PORT, () =>
@@ -88,7 +85,7 @@ app.listen(PORT, () =>
 
 /*current
 
-POST /api/notes should receive a new note to save on the request body, add it to the db.json file, and then return the new note to the client. You'll need to find a way to give each note a unique id when it's saved (look into npm packages that could do this for you).
+
 
 */
 
@@ -96,6 +93,7 @@ POST /api/notes should receive a new note to save on the request body, add it to
 GET /notes should return the notes.html file.
 GET * should return the index.html file.
 GET /api/notes should read the db.json file and return all saved notes as JSON.
+POST /api/notes should receive a new note to save on the request body, add it to the db.json file, and then return the new note to the client. You'll need to find a way to give each note a unique id when it's saved (look into npm packages that could do this for you).
 */
 
 /*
