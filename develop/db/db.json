@@ -1,6 +1,12 @@
 [
     {
-        "title":"Test Title",
-        "text":"Test text"
+        "title": "Test Title",
+        "text": "Test text",
+        "id": "b7cf2ab8-38c9-4b5e-9165-0762616384e0"
+    },
+    {
+        "title": "Note two",
+        "text": "this is note 2... it should be in the file!!! ",
+        "id": "0a790d2d-f2ce-474b-980e-7020fd0fd8f0"
     }
 ]
